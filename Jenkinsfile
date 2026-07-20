@@ -2,16 +2,26 @@ pipeline {
     agent any
 
     stages {
-        stage('Build Steps') {
+        stage('Build Steps - Test') {
             steps {
                 sh '''
-                echo "=== Вміст каталогу ==="
-                ls -la
+                echo "Перевірка файлу index.html..."
 
-                echo "<p>Build ID: $BUILD_ID</p>" >> index.html
+                if [ ! -f index.html ]; then
+                    echo "ПОМИЛКА: Файл index.html не існує!"
+                    exit 1
+                fi
 
-                echo "=== Новий вміст index.html ==="
-                cat index.html
+                lines=$(wc -l < index.html)
+                text=$(cat index.html)
+
+                if [ "$lines" -eq 1 ] && [ "$text" = "KAF21_TASP_JENKINS" ]; then
+                    echo "Тест пройдено успішно!"
+                else
+                    echo "ПОМИЛКА: Вміст index.html неправильний!"
+                    echo "Очікується один рядок: KAF21_TASP_JENKINS"
+                    exit 1
+                fi
                 '''
             }
         }
