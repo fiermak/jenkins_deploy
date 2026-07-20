@@ -2,21 +2,17 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
+        stage('Build Steps') {
             steps {
-                checkout scm
-            }
-        }
+                sh '''
+                echo "=== Вміст каталогу ==="
+                ls -la
 
-        stage('Build') {
-            steps {
-                sh 'echo "Build successful!"'
-            }
-        }
+                echo "<p>Build ID: $BUILD_ID</p>" >> index.html
 
-        stage('List files') {
-            steps {
-                sh 'ls -la'
+                echo "=== Новий вміст index.html ==="
+                cat index.html
+                '''
             }
         }
     }
